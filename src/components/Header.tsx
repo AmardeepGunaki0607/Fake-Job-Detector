@@ -1,6 +1,7 @@
 import React from 'react';
-import { ShieldCheck, Cpu, Sparkles, BookOpen, AlertTriangle, FileText, Mail, History } from 'lucide-react';
+import { ShieldCheck, Cpu, Sparkles, BookOpen, AlertTriangle, FileText, Mail, History, LogOut, User as UserIcon } from 'lucide-react';
 import { ThemeToggle } from './ThemeToggle';
+import { useAuth } from '../context/AuthContext';
 
 export type ActiveTabType = 'analyze' | 'verifier' | 'samples' | 'safety' | 'history' | 'about';
 
@@ -11,6 +12,8 @@ interface HeaderProps {
 }
 
 export const Header: React.FC<HeaderProps> = ({ activeTab, onTabChange, historyCount = 0 }) => {
+  const { user, signOut } = useAuth();
+
   return (
     <header className="bg-white/95 dark:bg-slate-900/95 backdrop-blur-sm border-b border-slate-200 dark:border-slate-800 text-slate-900 dark:text-white sticky top-0 z-40 shadow-xs" id="app-header">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -36,13 +39,22 @@ export const Header: React.FC<HeaderProps> = ({ activeTab, onTabChange, historyC
               </div>
             </div>
 
-            {/* Mobile-only theme toggle */}
-            <div className="md:hidden">
+            {/* Mobile-only theme toggle & User Sign out */}
+            <div className="flex items-center space-x-2 md:hidden">
               <ThemeToggle />
+              {user && (
+                <button
+                  onClick={() => signOut()}
+                  title="Sign out"
+                  className="p-2 rounded-lg text-slate-500 hover:text-slate-800 dark:text-slate-400 dark:hover:text-white"
+                >
+                  <LogOut className="w-4 h-4" />
+                </button>
+              )}
             </div>
           </div>
 
-          {/* Navigation Tabs & Theme Toggle for Desktop */}
+          {/* Navigation Tabs & User Profile & Theme Toggle for Desktop */}
           <div className="flex items-center space-x-3 self-start md:self-auto overflow-x-auto max-w-full pb-1 md:pb-0">
             <nav className="flex items-center space-x-1 bg-slate-100 dark:bg-slate-950/80 p-1 rounded-xl border border-slate-200 dark:border-slate-800" aria-label="Main Navigation">
               <button
@@ -128,6 +140,32 @@ export const Header: React.FC<HeaderProps> = ({ activeTab, onTabChange, historyC
                 <span>About</span>
               </button>
             </nav>
+
+            {/* User Profile Pill & Sign Out (Visible across all screens) */}
+            {user && (
+              <div className="flex items-center space-x-2 px-2.5 py-1 rounded-xl bg-slate-100 dark:bg-slate-800/90 border border-slate-200 dark:border-slate-700 text-xs shadow-xs">
+                <div className="w-6 h-6 rounded-full bg-indigo-600 text-white flex items-center justify-center font-bold text-[11px] overflow-hidden shrink-0">
+                  {user.photoURL ? (
+                    <img src={user.photoURL} alt="Avatar" className="w-full h-full object-cover" />
+                  ) : (
+                    user.displayName ? user.displayName.charAt(0).toUpperCase() : (user.email ? user.email.charAt(0).toUpperCase() : <UserIcon className="w-3.5 h-3.5" />)
+                  )}
+                </div>
+                <span className="max-w-[80px] sm:max-w-[120px] truncate text-slate-700 dark:text-slate-200 font-medium">
+                  {user.isAnonymous ? 'Guest' : (user.displayName || user.email?.split('@')[0] || 'User')}
+                </span>
+                <button
+                  type="button"
+                  onClick={() => signOut()}
+                  title="Sign out of account"
+                  className="flex items-center space-x-1 px-2 py-1 rounded-lg bg-rose-50 dark:bg-rose-950/40 text-rose-600 dark:text-rose-400 hover:bg-rose-100 dark:hover:bg-rose-900/60 font-semibold text-[11px] transition-colors cursor-pointer border border-rose-200/60 dark:border-rose-800/60"
+                  id="btn-sign-out"
+                >
+                  <LogOut className="w-3.5 h-3.5" />
+                  <span className="hidden sm:inline">Sign Out</span>
+                </button>
+              </div>
+            )}
 
             {/* Desktop Theme Switch */}
             <div className="hidden md:flex items-center pl-1">

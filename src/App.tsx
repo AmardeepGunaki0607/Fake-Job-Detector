@@ -9,13 +9,16 @@ import { SampleJobsBank } from './components/SampleJobsBank';
 import { DomainEmailVerifier } from './components/DomainEmailVerifier';
 import { ScanHistory } from './components/ScanHistory';
 import { GlobalNetworkGlobeBackground } from './components/GlobalNetworkGlobeBackground';
+import { SignInModal } from './components/SignInModal';
 import { JobInput, AnalysisResult, SampleJob, HistoryItem } from './types';
-import { ShieldCheck, Cpu } from 'lucide-react';
+import { ShieldCheck, Cpu, Loader2 } from 'lucide-react';
 import { ThemeProvider } from './context/ThemeContext';
+import { AuthProvider, useAuth } from './context/AuthContext';
 
 const LOCAL_STORAGE_KEY = 'ai_job_detector_history';
 
 function JobDetectorApp() {
+  const { user, loading: authLoading } = useAuth();
   const [activeTab, setActiveTab] = useState<ActiveTabType>('analyze');
   const [formData, setFormData] = useState<JobInput>({
     jobTitle: '',
@@ -137,10 +140,24 @@ function JobDetectorApp() {
     }
   };
 
+  if (authLoading) {
+    return (
+      <div className="min-h-screen bg-slate-950 flex items-center justify-center text-white">
+        <div className="flex flex-col items-center space-y-3">
+          <Loader2 className="w-8 h-8 text-indigo-500 animate-spin" />
+          <p className="text-sm font-medium text-slate-400">Loading FraudGuard Security Engine...</p>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="min-h-screen bg-slate-50 dark:bg-slate-950 text-slate-900 dark:text-slate-100 flex flex-col font-sans selection:bg-indigo-500 selection:text-white transition-colors duration-150 relative overflow-x-hidden" id="app-root">
       {/* 3D Global Network Connection & Employment Verification Globe */}
       <GlobalNetworkGlobeBackground />
+
+      {/* Mandatory Sign In Modal if not logged in */}
+      {!user && <SignInModal />}
 
       {/* Navigation Header */}
       <Header
@@ -241,7 +258,9 @@ function JobDetectorApp() {
 export default function App() {
   return (
     <ThemeProvider>
-      <JobDetectorApp />
+      <AuthProvider>
+        <JobDetectorApp />
+      </AuthProvider>
     </ThemeProvider>
   );
 }

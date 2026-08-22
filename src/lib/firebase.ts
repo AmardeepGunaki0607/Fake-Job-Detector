@@ -1,0 +1,22 @@
+import { initializeApp, getApps, getApp } from 'firebase/app';
+import { getAuth, GoogleAuthProvider } from 'firebase/auth';
+import { getFirestore } from 'firebase/firestore';
+
+export const firebaseConfig = {
+  projectId: "turnkey-granite-9hh41",
+  appId: "1:770534148301:web:8ec78d3ed48eaeb83c0184",
+  apiKey: "AIzaSyC68XfCeuqP_rxqYGK52q2AJLL4WPmTo1g",
+  authDomain: "turnkey-granite-9hh41.firebaseapp.com",
+  firestoreDatabaseId: "ai-studio-aifakejobposting-cdb61ee8-a2c1-4bbc-ab33-5e0085606003",
+  storageBucket: "turnkey-granite-9hh41.firebasestorage.app",
+  messagingSenderId: "770534148301",
+  measurementId: "",
+  oAuthClientId: "770534148301-q6nkaslsubf600l0tko24sbbf8mlll9l.apps.googleusercontent.com",
+  recaptchaSiteKey: ""
+};
+
+const app = getApps().length > 0 ? getApp() : initializeApp(firebaseConfig);
+export const auth = getAuth(app);
+export const db = getFirestore(app, firebaseConfig.firestoreDatabaseId || '(default)');
+export const googleProvider = new GoogleAuthProvider();
+export default app;
