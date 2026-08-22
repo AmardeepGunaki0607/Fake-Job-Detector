@@ -1,0 +1,7 @@
+{
+  "name": "AI Fake Job Posting Detection",
+  "description": "Detect potentially fraudulent online job and internship postings using AI and Machine Learning text classification.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
+
